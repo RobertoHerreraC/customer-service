@@ -1,0 +1,224 @@
+openapi: 3.0.3
+info:
+  title: Customer Service API
+  version: 1.0.0
+  description: API para la gestión de clientes bancarios.
+
+servers:
+  - url: http://localhost:8081
+    description: Local customer-service
+
+tags:
+  - name: Customers
+    description: Operaciones de gestión de clientes
+
+paths:
+  /api/v1/customers:
+    post:
+      tags:
+        - Customers
+      summary: Create customer
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '201':
+          description: Cliente creado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Customer already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    get:
+      tags:
+        - Customers
+      summary: Find all customers
+      operationId: findAllCustomers
+      responses:
+        '200':
+          description: Customers found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomerResponse'
+
+  /api/v1/customers/{id}:
+    get:
+      tags:
+        - Customers
+      summary: Find customer by id
+      operationId: findCustomerById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Customer unique identifier
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Customer found successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      tags:
+        - Customers
+      summary: Update customer
+      operationId: updateCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Customer unique identifier
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '200':
+          description: Customer updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      tags:
+        - Customers
+      summary: Delete customer
+      operationId: deleteCustomer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Customer unique identifier
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Customer deleted successfully
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CustomerRequest:
+      type: object
+      required:
+        - documentNumber
+        - fullName
+        - customerType
+        - email
+      properties:
+        documentNumber:
+          type: string
+          example: "12345678"
+        fullName:
+          type: string
+          example: "Roberto Herrera"
+        customerType:
+          type: string
+          example: "PERSONAL"
+        email:
+          type: string
+          format: email
+          example: "roberto@email.com"
+        phone:
+          type: string
+          example: "999999999"
+        address:
+          type: string
+          example: "Lima, Peru"
+
+    CustomerResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "665f1a2b9c1d4e001234abcd"
+        documentNumber:
+          type: string
+          example: "12345678"
+        fullName:
+          type: string
+          example: "Roberto Herrera"
+        customerType:
+          type: string
+          example: "PERSONAL"
+        email:
+          type: string
+          format: email
+          example: "roberto@email.com"
+        phone:
+          type: string
+          example: "999999999"
+        address:
+          type: string
+          example: "Lima, Peru"
+        active:
+          type: boolean
+          example: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "CUSTOMER_NOT_FOUND"
+        message:
+          type: string
+          example: "Customer not found"
+        path:
+          type: string
+          example: "/api/v1/customers/665f1a2b9c1d4e001234abcd"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-05-29T12:30:00"

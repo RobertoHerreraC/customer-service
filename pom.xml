@@ -45,7 +45,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -75,6 +75,11 @@
 		<dependency>
 			<groupId>io.reactivex.rxjava3</groupId>
 			<artifactId>rxjava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.6</version> <!-- Versión recomendada y estable -->
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -136,6 +141,37 @@
 									<artifactId>lombok</artifactId>
 								</path>
 							</annotationProcessorPaths>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>7.10.0</version>
+				<executions>
+					<execution>
+						<id>generate-customer-api</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>
+								${project.basedir}/src/main/resources/openapi/customer-api.yaml
+							</inputSpec>
+
+							<generatorName>spring</generatorName>
+
+							<apiPackage>com.bank.customer.api.generated</apiPackage>
+							<modelPackage>com.bank.customer.api.dto</modelPackage>
+
+							<configOptions>
+								<interfaceOnly>true</interfaceOnly>
+								<useSpringBoot3>true</useSpringBoot3>
+								<reactive>true</reactive>
+								<dateLibrary>java17</dateLibrary>
+								<useTags>true</useTags>
+							</configOptions>
 						</configuration>
 					</execution>
 				</executions>
