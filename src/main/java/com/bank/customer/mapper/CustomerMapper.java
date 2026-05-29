@@ -33,4 +33,14 @@ public class CustomerMapper {
         response.setActive(customer.getActive());
         return response;
     }
+
+    public Customer updateEntity(Customer customer, CustomerRequest request) {
+        customer.setDocumentNumber(request.getDocumentNumber());
+        customer.setFullName(request.getFullName());
+        customer.setCustomerType(CustomerType.valueOf(request.getCustomerType()));
+        customer.setEmail(request.getEmail());
+        customer.setPhone(request.getPhone());
+        customer.setAddress(request.getAddress());
+        return customer;
+    }
 }

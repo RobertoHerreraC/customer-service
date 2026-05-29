@@ -10,4 +10,5 @@ public interface CustomerService {
     Single<CustomerResponse> create(CustomerRequest request);
     Flowable<CustomerResponse> findAll();
     Single<CustomerResponse> findById(String id);
+    Single<CustomerResponse> update(String id, CustomerRequest request);
 }

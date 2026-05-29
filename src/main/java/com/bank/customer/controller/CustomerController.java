@@ -55,4 +55,19 @@ public class CustomerController implements CustomersApi {
                 )
                 .map(ResponseEntity::ok);
     }
+
+    @Override
+    public Mono<ResponseEntity<CustomerResponse>> updateCustomer(
+            String id,
+            @Valid Mono<CustomerRequest> customerRequest,
+            ServerWebExchange exchange) {
+
+        return customerRequest
+                .flatMap(request ->
+                        Mono.fromCompletionStage(
+                                customerService.update(id, request).toCompletionStage()
+                        )
+                )
+                .map(ResponseEntity::ok);
+    }
 }

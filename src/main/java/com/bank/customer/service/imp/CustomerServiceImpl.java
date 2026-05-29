@@ -2,6 +2,7 @@ package com.bank.customer.service.imp;
 
 import com.bank.customer.api.dto.CustomerRequest;
 import com.bank.customer.api.dto.CustomerResponse;
+import com.bank.customer.domain.Customer;
 import com.bank.customer.exception.CustomerAlreadyExistsException;
 import com.bank.customer.exception.CustomerNotFoundException;
 import com.bank.customer.mapper.CustomerMapper;
@@ -61,4 +62,43 @@ public class CustomerServiceImpl implements CustomerService {
                 .doOnSuccess(response -> log.info("Customer found with id: {}", id))
                 .doOnError(error -> log.error("Error finding customer with id {}: {}", id, error.getMessage()));
     }
+
+    @Override
+    public Single<CustomerResponse> update(String id, CustomerRequest request) {
+        return Single.fromPublisher(
+                        customerRepository.findById(id)
+                                .switchIfEmpty(Mono.error(new CustomerNotFoundException(id)))
+                )
+                .flatMap(existingCustomer ->
+                        validateDocumentNumberForUpdate(id, request)
+                                .flatMap(valid -> {
+                                    Customer updatedCustomer =
+                                            customerMapper.updateEntity(existingCustomer, request);
+
+                                    return Single.fromPublisher(customerRepository.save(updatedCustomer))
+                                            .map(customerMapper::toResponse);
+                                })
+                );
+    }
+
+    private Single<Boolean> validateDocumentNumberForUpdate(
+            String id,
+            CustomerRequest request
+    ) {
+        return Single.fromPublisher(
+                        customerRepository.findByDocumentNumber(request.getDocumentNumber())
+                                .filter(customer -> !customer.getId().equals(id))
+                                .hasElement()
+                )
+                .flatMap(existsInAnotherCustomer -> {
+                    if (Boolean.TRUE.equals(existsInAnotherCustomer)) {
+                        return Single.error(
+                                new CustomerAlreadyExistsException(request.getDocumentNumber())
+                        );
+                    }
+
+                    return Single.just(Boolean.TRUE);
+                });
+    }
+
 }
