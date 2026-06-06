@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class CustomerController implements CustomersApi {
 
-    private final CustomerService customerService;
+  private final CustomerService customerService;
 
     @Override
     public Mono<ResponseEntity<CustomerResponse>> createCustomer(
