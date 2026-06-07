@@ -166,6 +166,9 @@ components:
         customerType:
           type: string
           example: "PERSONAL"
+        profile:
+          type: string
+          example: "STANDARD"
         email:
           type: string
           format: email
@@ -192,6 +195,9 @@ components:
         customerType:
           type: string
           example: "PERSONAL"
+        profile:
+          type: string
+          example: "VIP"
         email:
           type: string
           format: email

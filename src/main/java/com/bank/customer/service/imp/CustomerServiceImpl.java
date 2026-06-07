@@ -3,11 +3,14 @@ package com.bank.customer.service.imp;
 import com.bank.customer.api.dto.CustomerRequest;
 import com.bank.customer.api.dto.CustomerResponse;
 import com.bank.customer.domain.Customer;
+import com.bank.customer.domain.CustomerProfile;
+import com.bank.customer.domain.CustomerType;
 import com.bank.customer.exception.CustomerAlreadyExistsException;
 import com.bank.customer.exception.CustomerNotFoundException;
 import com.bank.customer.mapper.CustomerMapper;
 import com.bank.customer.repository.CustomerRepository;
 import com.bank.customer.service.CustomerService;
+import com.bank.customer.strategy.CustomerProfileValidationContext;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +25,15 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
+    private final CustomerProfileValidationContext profileValidationContext;
 
     @Override
     public Single<CustomerResponse> create(CustomerRequest request) {
+        Customer customer = customerMapper.toModel(request);
+        profileValidationContext.validate(
+                customer.getCustomerType(),
+                customer.getCustomerProfile());
+
         return Single.fromPublisher(
                 customerRepository.existsByDocumentNumber(request.getDocumentNumber())
                         .flatMap(exists -> {
@@ -74,6 +83,11 @@ public class CustomerServiceImpl implements CustomerService {
                                 .flatMap(valid -> {
                                     Customer updatedCustomer =
                                             customerMapper.updateEntity(existingCustomer, request);
+
+                                    profileValidationContext.validate(
+                                            updatedCustomer.getCustomerType(),
+                                            updatedCustomer.getCustomerProfile()
+                                    );
 
                                     return Single.fromPublisher(customerRepository.save(updatedCustomer))
                                             .map(customerMapper::toResponse);

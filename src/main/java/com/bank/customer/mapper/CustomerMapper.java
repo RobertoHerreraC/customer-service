@@ -3,6 +3,7 @@ package com.bank.customer.mapper;
 import com.bank.customer.api.dto.CustomerRequest;
 import com.bank.customer.api.dto.CustomerResponse;
 import com.bank.customer.domain.Customer;
+import com.bank.customer.domain.CustomerProfile;
 import com.bank.customer.domain.CustomerType;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,7 @@ public class CustomerMapper {
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .address(request.getAddress())
+                .customerProfile(toModelProfile(request.getProfile()))
                 .active(true)
                 .build();
     }
@@ -31,6 +33,7 @@ public class CustomerMapper {
         response.setPhone(customer.getPhone());
         response.setAddress(customer.getAddress());
         response.setActive(customer.getActive());
+        response.setProfile(toApiProfile(customer.getCustomerProfile()));
         return response;
     }
 
@@ -41,6 +44,18 @@ public class CustomerMapper {
         customer.setEmail(request.getEmail());
         customer.setPhone(request.getPhone());
         customer.setAddress(request.getAddress());
+        customer.setCustomerProfile(toModelProfile(request.getProfile()));
         return customer;
+    }
+
+    private CustomerProfile toModelProfile(String profile) {
+        return profile == null ? CustomerProfile.STANDARD : CustomerProfile.valueOf(profile);
+    }
+
+    private String toApiProfile(
+            CustomerProfile profile) {
+        return profile == null
+                ? CustomerProfile.STANDARD.toString()
+                : profile.name();
     }
 }

@@ -58,6 +58,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    @ExceptionHandler(CustomerBusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(CustomerBusinessException exception) {
+        ErrorResponse error = new ErrorResponse();
+        error.setCode("BUSINESS_RULE_ERROR");
+        error.setMessage(exception.getMessage());
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(CustomerProfileInvalidException.class)
+    public ResponseEntity<ErrorResponse> handleCustomerProfileInvalidException(
+            CustomerProfileInvalidException exception) {
+        ErrorResponse error = new ErrorResponse();
+        error.setCode("CUSTOMER_PROFILE_INVALID");
+        error.setMessage(exception.getMessage());
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception exception,

@@ -20,6 +20,7 @@ public class Customer {
     private CustomerType customerType;
     private String email;
     private String phone;
+    private CustomerProfile customerProfile;
     private String address;
     private Boolean active;
 }
