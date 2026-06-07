@@ -69,6 +69,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 			<version>2.6.0</version>
@@ -219,8 +224,10 @@
 						<exclude>**/*Application.class</exclude>
 						<exclude>**/config/**</exclude>
 						<exclude>**/dto/**</exclude>
+						<exclude>**/generated/**</exclude>
 						<exclude>**/document/**</exclude>
 						<exclude>**/model/**</exclude>
+						<exclude>**/exception/**</exclude>
 					</excludes>
 				</configuration>
 				<executions>
